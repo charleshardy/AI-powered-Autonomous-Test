@@ -1,0 +1,192 @@
+Applied OCR to Detect Linux Kernel Call Trace
+=============================================
+
+This test scenario is a demonstration of adopting OCR (Optical Character Recognition) technique to detect Wind River Linux Kernel call trace for DevOps automation test.
+
+
+Background
+==========
+
+To make test execution quickly and effectively in every iteration of DevOps is important. How long a round of regression tests will take is essential for automated tests. 
+
+Problems
+
+Current automation test framework does not known the status of test board, when linux kernel call trace and panic occurs in some circumstances. The automation test framework has to wait for a period of time to reboot the board by force. A predefined timeout value (usually 30 minutes) for each test case execution is used by the automation framework. That’s not efficiency. Are there any ways to short the execution time?  
+
+Also there is no serial console on some hardware board for automation framework to use. That is an issue for tester to add the board into automation test plan.
+
+Solution
+========
+
+To apply OCR (Optical Character Recognition) technique can resolve above issues. 
+
+1. Using a web camera capture the output video stream from the screen of test board
+2. To recognize the texts from the frame captured 
+3. Let test automation framework known and take action next
+
+
+More Details
+============
+
+	Hardware: Web camera (Logitech Webcam C270) is connected to Intel NUC 5i3MYHE
+
+	OS: Wind River Linux 10.18 (based on yocto project 2.6) 
+
+	Device Drivers:
+
+		CONFIG_MEDIA_CAMERA_SUPPORT=y
+    		CONFIG_MEDIA_USB_SUPPORT=y
+    		CONFIG_USB_VIDEO_CLASS=y
+    		CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV=y
+    		CONFIG_SND_USB=y
+   		CONFIG_SND_USB_AUDIO=y
+                ...
+
+	Userspace Packages: 
+		opencv 3.4.3 (.bb is updated)
+		tesseract 4.0  (updated from 3.0)    
+		tesseract-lang 4.0 (updated from 3.0)
+		v4l-utils
+		glog
+		tbb
+		gflags
+		libeigen
+		leptonica
+		giflib
+		gstreamer1.0
+		gstreamer1.0-libav
+		python3-pip
+   		gstreamer1.0-python
+    		gstreamer1.0-meta-base
+		gstreamer1.0-vaapi
+
+	Application: 
+		ocr.py
+
+
+Demo Setup Steps
+===============
+
+	1. Build WRL1018 project with the following steps
+	
+	${WRL1018_INSTALL_DIR}/wrlinux-10/setup.sh --machines intel-x86-64 --distros=wrlinux-std-sato --dl-layers --accept-eula=yes
+	
+	# Fixed a build issue for opencv_3.4.3 in (yocto 2.6)
+	cp ./opencv_3.4.3.bb ./layers/meta-openembedded/meta-oe/recipes-support/opencv/opencv_3.4.3.bb
+	
+	# Updated tesseract and its language package from 3.0 to 4.0
+	cp ./tesseract_git.bb ./layers/meta-openembedded/meta-oe/recipes-graphics/tesseract/tesseract_git.bb
+	cp ./tesseract-lang_git.bb ./layers/meta-openembedded/meta-oe/recipes-graphics/tesseract/tesseract-lang_git.bb
+	
+	# Deployed the packages to rootfs image
+	cp ./wrlinux-image-glibc-std.bb ./layers/wrlinux/wrlinux-distro/recipes-base/images/wrlinux-image-glibc-std.bb
+	
+	. ./environment-setup-x86_64-wrlinuxsdk-linux
+	. ./oe-init-build-env ocr_build
+	
+	Edit conf/local.conf, update the value of BB_NO_NETWORK from '1' to '0' and append the following lines
+	
+	PNWHITELIST_openembedded-layer += 'opencv'
+	PNWHITELIST_openembedded-layer += 'v4l-utils'
+	PNWHITELIST_openembedded-layer += 'glog'
+	PNWHITELIST_openembedded-layer += 'tbb'
+	PNWHITELIST_openembedded-layer += 'gflags'
+	PNWHITELIST_openembedded-layer += 'libeigen'
+	
+	PNWHITELIST_openembedded-layer += 'tesseract'
+	PNWHITELIST_openembedded-layer += 'leptonica'
+	PNWHITELIST_openembedded-layer += 'giflib'
+	PNWHITELIST_openembedded-layer += 'tesseract-lang'
+	
+	#PNWHITELIST_multimedia-layer += 'gstreamer'
+	PNWHITELIST_openembedded-layer += 'gstreamer1.0-libav'
+	LICENSE_FLAGS_WHITELIST = "commercial"
+	
+	
+	bitbake wrlinux-image-glibc-std-sato
+	
+	2. Load kernel and rootfs images to USB disk and boot the target of intel nuc5 from USB device (EFI)
+	
+	3. Setup webcam and connect to the intel nuc5 board
+	
+	lsusb will found the camera
+	
+	4. Run pip3 pytesseract
+	
+	5. Run the following commands to check the environment
+	
+	  tesseract
+	  opencv_version
+	  python3 --version
+	
+	5. Deploy ocr.py to the target
+	
+	6. python3 ocr.py
+	
+	Now the video window for the camera will show up and let's set the focus of camera to the screen, which text chars are output.
+
+
+FAQ & Issues
+===============
+	The following issues were met during the environment setting up
+	
+	1. Issue : The following erro occurs.
+	
+	sh-4.4# python3 ocv.py 
+	
+	(python3:520): GStreamer-CRITICAL **: 05:59:04.562: gst_element_get_state: assertion 'GST_IS_ELEMENT (element)' failed
+	
+	Solution:
+	  a. v4l2-ctl --list-devices
+	    https://github.com/opencv/opencv/issues/11806
+	
+	  b. gstreamer1.0-libav should be included in the rootfs
+	
+	    Note: This need to add the following line to conf/local.conf file before starting build
+	
+	    LICENSE_FLAGS_WHITELIST = "commercial"
+	
+	  c. Enable webcam related device driver in kernel as below.
+	
+	    ...
+	    CONFIG_MEDIA_CAMERA_SUPPORT=y
+	    CONFIG_MEDIA_USB_SUPPORT=y
+	    CONFIG_USB_VIDEO_CLASS=m  --> must
+	    CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV=y
+	    CONFIG_SND_USB=y
+	    CONFIG_SND_USB_AUDIO=m 
+	    ...
+	
+	    For more please refer to .config file
+	
+	2. Issue : The following erro occurs, during output ocr text by python3.
+	
+	  UnicodeEncodeError: 'ascii' codec can't encode characters in position 2-5: ordinal not in range(128)
+	
+	Solution:
+	
+	  PYTHONIOENCODING=utf-8 python your_script.py
+	
+	install language-pack-en
+	export LANG=en_US.UTF-8
+	
+	Reference:
+	  https://blog.csdn.net/AckClinkz/article/details/78538462
+	
+	3. Issue: The following WARNING occurs during the ocv.py script is running
+	
+	(python3:767): dbind-WARNING **: 02:38:17.502: Error retrieving accessibility bus address: org.a11y.Bus.Error: Failed to execute child process ?/usr/bin? (Permission denied)
+	
+	Solution:
+	  TODO
+	
+	4. Issue: There delays during the video frames captured are displayed to the screen
+	
+	Solution:
+	  Find ways to messure and optimize the FPS.
+	
+	Reference:
+	  https://www.learnopencv.com/how-to-find-frame-rate-or-frames-per-second-fps-in-opencv-python-cpp/
+	  https://www.pyimagesearch.com/2017/02/06/faster-video-file-fps-with-cv2-videocapture-and-opencv/
+	  https://www.pyimagesearch.com/2015/12/21/increasing-webcam-fps-with-python-and-opencv/
+	

@@ -1,0 +1,4 @@
+Mainly Activities at Test Case Development Stage
+===============================================
+
+Create test cases, test design, automation scripts

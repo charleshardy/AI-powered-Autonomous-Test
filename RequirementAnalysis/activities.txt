@@ -1,0 +1,9 @@
+Mainly Activities at Requirement Analysis Stage
+===============================================
+
+
+Identify types of tests to be performed. 
+
+Gather details about testing priorities and focus. 
+
+Identify test environment details

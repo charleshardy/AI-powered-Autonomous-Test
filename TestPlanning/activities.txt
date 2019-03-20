@@ -1,0 +1,9 @@
+Mainly Activities at Test Planing Stage
+===============================================
+
+
+Analyze various testing approaches available. 
+
+Resource planning
+
+Test plan/strategy document

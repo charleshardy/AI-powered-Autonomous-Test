@@ -1,0 +1,12 @@
+Mainly Activities at Test Execution Stage
+===============================================
+
+Execute tests as per plan
+
+Analyze failures and file defects
+
+Update test plans/test cases, if necessary
+
+Defect fixes verifications
+
+Regression tests

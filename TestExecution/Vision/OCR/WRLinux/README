@@ -178,7 +178,10 @@ FAQ & Issues
 	(python3:767): dbind-WARNING **: 02:38:17.502: Error retrieving accessibility bus address: org.a11y.Bus.Error: Failed to execute child process ?/usr/bin? (Permission denied)
 	
 	Solution:
-	  TODO
+	  export NO_AT_BRIDGE=1
+
+	Reference:
+	  https://unix.stackexchange.com/questions/230238/starting-x-applications-from-the-terminal-and-the-warnings-that-follow
 	
 	4. Issue: There delays during the video frames captured are displayed to the screen
 	

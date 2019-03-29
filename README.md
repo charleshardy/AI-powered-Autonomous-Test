@@ -17,7 +17,7 @@ Manual => Automation => Autonomy
 - Low cost
      - 7 * 24 hour continuous working
 - Find issues for human difficult to cover 
-- Things robots do better than humans ([5-things-robots-better-humans/](https://www.therobotreport.com/5-things-robots-better-humans/))
+- Things AIs and robots do better than humans
 
 ## Mission
 - *Stage 0. Without AI, the test automation rate has not been reached to 100% (Current)*

@@ -1,7 +1,7 @@
 # AI-powered Autonomous Testing Platform (AATP)
 
 ## Introduction
-The platform is not a single AI related test tool or solution. It’s a whole set  of AI plus techniques and solutions for each software test life cycle.  Person or enterprise can take and assemble the techniques and solutions from the (AATP) platform to implement autonomous tests in their own environments.
+The platform is not a single AI related test tool or solution. It’s a whole set  of AI plus techniques and solutions for each software test life cycle to achieve autonomous test.  Person or enterprise can take and assemble the techniques and solutions from the (AATP) platform to implement autonomous tests in their own environments.
 
 ## Vision
 **Continuously embracing new technologies to achieve AI-driven the tests without human intervention**
@@ -15,7 +15,7 @@ Manual => Automation => Autonomy
 
 - Low latency on defect finding
 - Low cost
-- 7 * 24 hour continuous working
+     - 7 * 24 hour continuous working
 - Find issues for human difficult to cover 
 - Things robots do better than humans ([5-things-robots-better-humans/](https://www.therobotreport.com/5-things-robots-better-humans/))
 

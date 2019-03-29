@@ -1,6 +1,6 @@
 # AI-powered Autonomous Testing Platform (AATP)
 
-The platform is not a single AI related test tool or solution. It’s a whole set  of AI plus techniques and solutions for each software test life cycle.  Person or enterprise can take and assemble the techniques and solutions from the platform (AATP) to implement autonomous tests in their own environments.
+The platform is not a single AI related test tool or solution. It’s a whole set  of AI plus techniques and solutions for each software test life cycle.  Person or enterprise can take and assemble the techniques and solutions from the (AATP) platform to implement autonomous tests in their own environments.
 
 **Continuously embracing new technologies to achieve AI-driven the tests without human intervention**
 

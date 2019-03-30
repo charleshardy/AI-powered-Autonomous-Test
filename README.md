@@ -16,7 +16,7 @@ Manual => Automation => Autonomy
 - Low latency on defect finding
 - Low cost
      - 7 * 24 hour continuous working
-- Find issues for human difficult to cover 
+- Find diverse issues difficult for human to cover 
 - Things AIs and robots do better than humans
 
 ## Mission

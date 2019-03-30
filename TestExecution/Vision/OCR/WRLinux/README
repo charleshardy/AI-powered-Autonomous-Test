@@ -186,7 +186,7 @@ FAQ & Issues
 	Reference:
 	  https://unix.stackexchange.com/questions/230238/starting-x-applications-from-the-terminal-and-the-warnings-that-follow
 	
-	4. Issue: There delays during the video frames captured are displayed to the screen
+	4. Issue: There are delays during the video frames captured are displayed to the screen
 	
 	Solution:
 	  Find ways to messure and optimize the FPS.

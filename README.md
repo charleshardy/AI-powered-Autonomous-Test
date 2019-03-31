@@ -29,7 +29,7 @@ Manual => Automation => Autonomy
 ![](./Documents/Pictures/Architecture.jpg)
 
 ## More Details
-[](./Documents/PPT/AI-powered_Autonomous_Test_Platform.pdf)
+[PPT](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/Documents/PPT/AI-powered_Autonomous_Test_Platform.pdf)
 
 ## An Example
-[](./TestExecution/Vision/OCR/WRLinux)
+[Demo](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/TestExecution/Vision/OCR/WRLinux)

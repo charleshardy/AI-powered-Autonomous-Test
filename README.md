@@ -27,3 +27,9 @@ Manual => Automation => Autonomy
 
 ## Architecture
 ![](./Documents/Pictures/Architecture.jpg)
+
+## More Details
+![](./Documents/PPT/AI-powered_Autonomous_Test_Platform.pdf)
+
+## An Example
+![](./TestExecution/Vision/OCR/WRLinux)

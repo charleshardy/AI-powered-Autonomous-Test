@@ -1,0 +1,253 @@
+Applied Realtime Object Detection to Linux BSP graphic tests
+=============================================
+
+This test scenario is a demonstration of adopting Realtime Object Detection technique to validate the test results for Wind River Linux BSP graphic testing during the process of DevOps automation.
+
+
+Background
+==========
+
+Graphic testing is always a known difficult issue for automation tests. 
+
+Problems
+==========
+In the Wind River Linux BSP test, testers have to watch the screen to find if this kind of graphic test case run pass or failed. To automate graphic tests is really a challenge, especially on few extra user space test tools involved BSP tests. 
+
+For an example, the BTS test case of “graphic_glxgear”, will show a gear when the it is running.  If the gear frames1* display on the monitor, then BSP tester will identify the test run pass. 
+
+Is it possible to fully automate the graphic tests?
+
+Solution
+========
+
+Let's apply AI (Realtime Object Detection) technique to assist the automation tests.
+
+1. Using a web camera capture the output video stream from the monitor which is connecting to the test board
+2. To detect the object (checkpoints) from the frames out of captured video stream, if the camera detects the expected object then identify the test run pass.
+3. Let test automation framework known the test results and take action next.
+
+Demo Video
+==========
+[Youtube](TODO)
+
+More Details
+============
+
+        Hardware: Web camera (Logitech Webcam C270) is connected to Intel NUC 5i3MYHE
+
+        OS: Wind River Linux 10.18 (based on yocto project 2.6) 
+
+        Device Drivers:
+
+		CONFIG_MEDIA_CAMERA_SUPPORT=y
+    		CONFIG_MEDIA_USB_SUPPORT=y
+    		CONFIG_USB_VIDEO_CLASS=y
+    		CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV=y
+    		CONFIG_SND_USB=y
+   		CONFIG_SND_USB_AUDIO=y
+                ...
+
+	Userspace Packages: 
+		opencv 3.4.3 (.bb is updated)
+		pip3 
+		python3.5
+		v4l-utils
+		glog
+		tbb
+		gflags
+		libeigen
+		leptonica
+		giflib
+		gstreamer1.0
+		gstreamer1.0-libav
+		python3-pip
+   		gstreamer1.0-python
+    		gstreamer1.0-meta-base
+		gstreamer1.0-vaapi
+
+	Application: 
+		realtime_object_detection.py
+
+
+Demo Setup Steps
+===============
+
+	1. Build WRL1018 project with the following steps
+	
+	${WRL1018_INSTALL_DIR}/wrlinux-10/setup.sh --machines intel-x86-64 --distros=wrlinux-std-sato --dl-layers --accept-eula=yes
+	
+	# Fixed a build issue for opencv_3.4.3 in (yocto 2.6)
+	cp ./opencv_3.4.3.bb ./layers/meta-openembedded/meta-oe/recipes-support/opencv/opencv_3.4.3.bb
+	
+	# Deployed the packages to rootfs image
+	cp ./wrlinux-image-glibc-std.bb ./layers/wrlinux/wrlinux-distro/recipes-base/images/wrlinux-image-glibc-std.bb
+	
+	. ./environment-setup-x86_64-wrlinuxsdk-linux
+	. ./oe-init-build-env ocr_build
+	
+	Edit conf/local.conf, update the value of BB_NO_NETWORK from '1' to '0' and append the following lines
+	
+	PNWHITELIST_openembedded-layer += 'opencv'
+	PNWHITELIST_openembedded-layer += 'v4l-utils'
+	PNWHITELIST_openembedded-layer += 'glog'
+	PNWHITELIST_openembedded-layer += 'tbb'
+	PNWHITELIST_openembedded-layer += 'gflags'
+	PNWHITELIST_openembedded-layer += 'libeigen'
+	
+	PNWHITELIST_openembedded-layer += 'leptonica'
+	PNWHITELIST_openembedded-layer += 'giflib'
+	
+	#PNWHITELIST_multimedia-layer += 'gstreamer'
+	PNWHITELIST_openembedded-layer += 'gstreamer1.0-libav'
+	LICENSE_FLAGS_WHITELIST = "commercial"
+	
+	
+	bitbake wrlinux-image-glibc-std-sato
+	
+	2. Load kernel and rootfs images to USB disk and boot the target of intel nuc5 from USB device (EFI)
+	
+	3. Setup webcam and connect to the intel nuc5 board
+	
+	lsusb will found the camera
+	
+	4. Run 'pip3 install tensorflow==2.0.0-alpha0' command
+
+	5. Run the following commands to check the environment
+
+	  opencv_version
+          python3 --version
+          pip3 freeze | grep tensorflow
+	
+        6. Deploy the 'TestExecution/Vision/ObjectDetection/WRLinux' directory (without 'data_set' and 'training' directory inside) to the target 
+           The folder of 'WRLinux' contains the retrained models for the custom detect object data set (gears)
+	
+        7. python3 realtime_object_detection.py -src 0 -wd 800 -ht 600 -num-w 4 -q-size 1024
+	
+        Now the video window for the camera will show up and let's set the focus of camera to the screen, which the test graphics will be displayed
+
+
+FAQ & Issues
+===============
+        The following issues or questions were met during the environment setting up
+	
+        1. Question : Can jupyter notebook be run on the intel-nuc board?
+
+          The answer is yes. To install juptyer notebook directly on WRLinux 10.18 alive by using the 'pip3 install jupyter' command is OK, but there will be many issues when using it, such as below two items (A, B). 
+
+          So using "anaconda" (https://www.anaconda.com/distribution/) is recommended strongly. 
+          (wget https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh)
+
+            A. 
+              root@intel-x86-64:~# jupyter notebook
+              Traceback (most recent call last):
+                File "/usr/bin/jupyter-notebook", line 7, in <module>
+                  from notebook.notebookapp import main
+                File "/usr/lib64/python3.5/site-packages/notebook/__init__.py", line 25, in <module>
+                  from .nbextensions import install_nbextension
+                File "/usr/lib64/python3.5/site-packages/notebook/nbextensions.py", line 610, in <module>
+                  from .extensions import (
+                File "/usr/lib64/python3.5/site-packages/notebook/extensions.py", line 8, in <module>
+                  from tornado.log import LogFormatter
+                File "/usr/lib64/python3.5/site-packages/tornado/log.py", line 34, in <module>
+                  from tornado.escape import _unicode
+                File "/usr/lib64/python3.5/site-packages/tornado/escape.py", line 27, in <module>
+                  from tornado.util import unicode_type
+                File "/usr/lib64/python3.5/site-packages/tornado/util.py", line 18, in <module>
+                  import typing
+              ImportError: No module named 'typing'
+
+
+            B.  jupyter notebook 500 : internal server error
+
+                ImportError: No module named ‘pty’
+                
+                [W 09:52:44.596 NotebookApp] Terminals not available (error was cannot import name 'windll')
+                [I 09:52:44.599 NotebookApp] Serving notebooks from local directory: /root
+                [I 09:52:44.599 NotebookApp] The Jupyter Notebook is running at:
+                [I 09:52:44.599 NotebookApp] http://128.224.162.219:8888/?token=ab0c4293c531ec23468897d5e9b11d32f33215c889955ac1
+                [I 09:52:44.599 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+                [W 09:52:44.603 NotebookApp] No web browser found: could not locate runnable browser.
+                [C 09:52:44.604 NotebookApp] 
+                    
+                    To access the notebook, open this file in a browser:
+                        file:///run/user/0/jupyter/nbserver-881-open.html
+                    Or copy and paste one of these URLs:
+                        http://128.224.162.219:8888/?token=ab0c4293c531ec23468897d5e9b11d32f33215c889955ac1
+                [I 09:53:04.795 NotebookApp] 302 GET /?token=ab0c4293c531ec23468897d5e9b11d32f33215c889955ac1 (128.224.176.185) 1.34ms
+                [E 09:53:06.710 NotebookApp] Uncaught exception GET /notebooks/Untitled.ipynb (128.224.176.185)
+                    HTTPServerRequest(protocol='http', host='128.224.162.219:8888', method='GET', uri='/notebooks/Untitled.ipynb', version='HTTP/1.1', remote_ip='128.224.176.185')
+                    Traceback (most recent call last):
+                      File "/usr/lib64/python3.5/site-packages/tornado/web.py", line 1697, in _execute
+                        result = method(*self.path_args, **self.path_kwargs)
+                      File "/usr/lib64/python3.5/site-packages/tornado/web.py", line 3174, in wrapper
+                        return method(self, *args, **kwargs)
+                      File "/usr/lib64/python3.5/site-packages/notebook/notebook/handlers.py", line 59, in get
+                        get_custom_frontend_exporters=get_custom_frontend_exporters
+                      File "/usr/lib64/python3.5/site-packages/notebook/base/handlers.py", line 519, in render_template
+                        return template.render(**ns)
+                      File "/usr/lib64/python3.5/site-packages/jinja2/environment.py", line 1008, in render
+                        return self.environment.handle_exception(exc_info, True)
+                      File "/usr/lib64/python3.5/site-packages/jinja2/environment.py", line 780, in handle_exception
+                        reraise(exc_type, exc_value, tb)
+                      File "/usr/lib64/python3.5/site-packages/jinja2/_compat.py", line 37, in reraise
+                        raise value.with_traceback(tb)
+                      File "/usr/lib64/python3.5/site-packages/notebook/templates/notebook.html", line 1, in top-level template code
+                        {% extends "page.html" %}
+                      File "/usr/lib64/python3.5/site-packages/notebook/templates/page.html", line 154, in top-level template code
+                        {% block header %}
+                      File "/usr/lib64/python3.5/site-packages/notebook/templates/notebook.html", line 120, in block "header"
+                        {% for exporter in get_custom_frontend_exporters() %}
+                      File "/usr/lib64/python3.5/site-packages/notebook/notebook/handlers.py", line 24, in get_custom_frontend_exporters
+                        exporter = get_exporter(name)()
+                      File "/usr/lib64/python3.5/site-packages/nbconvert/exporters/base.py", line 98, in get_exporter
+                        return entrypoints.get_single('nbconvert.exporters', name).load()
+                      File "/usr/lib64/python3.5/site-packages/entrypoints.py", line 82, in load
+                        mod = import_module(self.module_name)
+                      File "/usr/lib64/python3.5/importlib/__init__.py", line 126, in import_module
+                        return _bootstrap._gcd_import(name[level:], package, level)
+                      File "<frozen importlib._bootstrap>", line 985, in _gcd_import
+                      File "<frozen importlib._bootstrap>", line 968, in _find_and_load
+                      File "<frozen importlib._bootstrap>", line 943, in _find_and_load_unlocked
+                      File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+                      File "<frozen importlib._bootstrap>", line 985, in _gcd_import
+                      File "<frozen importlib._bootstrap>", line 968, in _find_and_load
+                      File "<frozen importlib._bootstrap>", line 957, in _find_and_load_unlocked
+                      File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+                      File "<frozen importlib._bootstrap_external>", line 697, in exec_module
+                      File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+                      File "/usr/lib64/python3.5/site-packages/latex_envs/__init__.py", line 3, in <module>
+                        from . import latex_envs
+                      File "/usr/lib64/python3.5/site-packages/latex_envs/latex_envs.py", line 19, in <module>
+                        from IPython.display import HTML, display,JSON
+                      File "/usr/lib64/python3.5/site-packages/IPython/__init__.py", line 54, in <module>
+                        from .core.application import Application
+                      File "/usr/lib64/python3.5/site-packages/IPython/core/application.py", line 25, in <module>
+                        from IPython.core import release, crashhandler
+                      File "/usr/lib64/python3.5/site-packages/IPython/core/crashhandler.py", line 27, in <module>
+                        from IPython.core import ultratb
+                      File "/usr/lib64/python3.5/site-packages/IPython/core/ultratb.py", line 119, in <module>
+                        from IPython.utils import path as util_path
+                      File "/usr/lib64/python3.5/site-packages/IPython/utils/path.py", line 17, in <module>
+                        from IPython.utils.process import system
+                      File "/usr/lib64/python3.5/site-packages/IPython/utils/process.py", line 19, in <module>
+                        from ._process_posix import system, getoutput, arg_split, check_pid
+                      File "/usr/lib64/python3.5/site-packages/IPython/utils/_process_posix.py", line 23, in <module>
+                        import pexpect
+                      File "/usr/lib64/python3.5/site-packages/pexpect/__init__.py", line 75, in <module>
+                        from .pty_spawn import spawn, spawnu
+                      File "/usr/lib64/python3.5/site-packages/pexpect/pty_spawn.py", line 4, in <module>
+                        import pty
+                    ImportError: No module named 'pty'
+                [E 09:53:06.721 NotebookApp] {
+                      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36",
+                      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
+                      "Cookie": "_xsrf=2|f64c3e77|303a3400c05d4407c1c70cdf2ad5a170|1554888421; username-128-224-162-219-8888=\"2|1:0|10:1554889984|29:username-128-224-162-219-8888|44:OWM3OTI2YjcyYTEzNDQ4YmE0NGE3ZjBlNzM1YTMwMDc=|3eb2fdadcf2c8b1991ad2ef1e8ef18dc440dedd6afc711423c4f9cc095264b75\"",
+                      "Host": "128.224.162.219:8888",
+                      "Accept-Language": "en-US,en;q=0.9",
+                      "Referer": "http://128.224.162.219:8888/tree",
+                      "Accept-Encoding": "gzip, deflate",
+                      "Upgrade-Insecure-Requests": "1",
+                      "Connection": "keep-alive"
+                    }
+                [E 09:53:06.722 NotebookApp] 500 GET /notebooks/Untitled.ipynb (128.224.176.185) 322.02ms referer=http://128.224.162.219:8888/tree
+

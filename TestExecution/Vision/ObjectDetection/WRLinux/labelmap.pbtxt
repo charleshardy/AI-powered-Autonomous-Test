@@ -1,0 +1,9 @@
+item {
+    id: 1
+    name: 'glxgears_pass'
+}
+
+item {
+    id: 2
+    name: 'xrandr_pass'
+}

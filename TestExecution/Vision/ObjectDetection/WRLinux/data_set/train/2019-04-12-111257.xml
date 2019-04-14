@@ -1,0 +1,26 @@
+<annotation>
+	<folder>train</folder>
+	<filename>2019-04-12-111257.jpg</filename>
+	<path>/home/charles/Images/images/train/2019-04-12-111257.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>800</width>
+		<height>600</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>glxgears_pass</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>18</xmin>
+			<ymin>55</ymin>
+			<xmax>584</xmax>
+			<ymax>599</ymax>
+		</bndbox>
+	</object>
+</annotation>

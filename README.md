@@ -32,5 +32,5 @@ Manual => Automation => Autonomy
 [PPT](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/Documents/PPT/AI-powered_Autonomous_Test_Platform.pdf)
 
 ## Examples
-[Demo 1](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/TestExecution/Vision/OCR/WRLinux)
-[Demo 2](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/TestExecution/Vision/ObjectDetection/WRLinux)
+- [Demo 1](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/TestExecution/Vision/OCR/WRLinux)
+- [Demo 2](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/TestExecution/Vision/ObjectDetection/WRLinux)

@@ -1,4 +1,4 @@
-Applied Realtime Object Detection to Linux BSP graphic tests
+Applied Realtime Object Detection to Linux BSP Graphic Test
 =============================================
 
 This test scenario is a demonstration of adopting Realtime Object Detection technique to validate the test results for Wind River Linux BSP graphic testing during the process of DevOps automation.
@@ -28,7 +28,7 @@ Let's apply AI (Realtime Object Detection) technique to assist the automation te
 
 Demo Video
 ==========
-[Youtube](TODO)
+[Youtube](https://youtu.be/cV22ADwP3Tw)
 
 More Details
 ============
@@ -64,6 +64,8 @@ More Details
    		gstreamer1.0-python
     		gstreamer1.0-meta-base
 		gstreamer1.0-vaapi
+                tensorflow 1.13.1 (installed at runtime online)
+                anaconda3-2019.03 (installed at runtime online)
 
 	Application: 
 		realtime_object_detection.py
@@ -106,11 +108,25 @@ Demo Setup Steps
 	
 	2. Load kernel and rootfs images to USB disk and boot the target of intel nuc5 from USB device (EFI)
 	
-	3. Setup webcam and connect to the intel nuc5 board
+	3. Setup webcam and connect to the intel nuc5 board and boot it up
 	
-	lsusb will found the camera
+          lsusb will found the camera
 	
-	4. Run 'pip3 install tensorflow==2.0.0-alpha0' command
+	4. Run the following commands to install extra user space packages from the internet
+
+            # wget https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh
+            # ./Anaconda3-2019.03-Linux-x86_64.sh
+            # set default python to anaconda3/bin/python3.7
+            # pip3 install opencv-python
+	    # pip3 install tensorflow
+	    # pip3 install tensorflow
+	    # pip3 install tensorflow
+	    # pip3 install tensorflow
+            # pip3 install jupyter (optional)
+
+            # adduser tester
+            # usermod -aG sudo tester
+            # su tester
 
 	5. Run the following commands to check the environment
 
@@ -121,7 +137,9 @@ Demo Setup Steps
         6. Deploy the 'TestExecution/Vision/ObjectDetection/WRLinux' directory (without 'data_set' and 'training' directory inside) to the target 
            The folder of 'WRLinux' contains the retrained models for the custom detect object data set (gears)
 	
-        7. python3 realtime_object_detection.py -src 0 -wd 800 -ht 600 -num-w 4 -q-size 1024
+        7. Start the application with a none root user.
+
+           sudo python3 realtime_object_detection.py -src 0 -wd 800 -ht 600 -num-w 4 -q-size 1024
 	
         Now the video window for the camera will show up and let's set the focus of camera to the screen, which the test graphics will be displayed
 
@@ -132,7 +150,8 @@ FAQ & Issues
 	
         1. Question : Can jupyter notebook be run on the intel-nuc board?
 
-          The answer is yes. To install juptyer notebook directly on WRLinux 10.18 alive by using the 'pip3 install jupyter' command is OK, but there will be many issues when using it, such as below two items (A, B). 
+          The answer is yes. (jupyter notebook --allow-root --ip 128.224.162.219 --port 8888)
+          To install juptyer notebook directly on WRLinux 10.18 alive by using the 'pip3 install jupyter' command is OK, but there will be many issues when using it, such as below two items (A, B). 
 
           So using "anaconda" (https://www.anaconda.com/distribution/) is recommended strongly. 
           (wget https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh)
@@ -251,3 +270,10 @@ FAQ & Issues
                     }
                 [E 09:53:06.722 NotebookApp] 500 GET /notebooks/Untitled.ipynb (128.224.176.185) 322.02ms referer=http://128.224.162.219:8888/tree
 
+        2. Issues - AttributeError: module 'tensorflow' has no attribute ‘contrib'
+
+          pip3 install absl-py
+      
+        3. How to select a model and retrain it with customized dataset by using tensorflow?
+
+          Please refer to https://www.tensorflow.org

@@ -20,10 +20,10 @@ Manual => Automation => Autonomy
 - Things AIs and robots do better than humans
 
 ## Mission
-- *Stage 0. Without AI, the test automation rate has not been reached to 100% (Current)*
-- Stage 1. AI-assisted testing with human intervention implement  100% automation
-- Stage 2. AI analyze requirement, test plan and code generation with human guidance
-- Stage 3. AI fully drive test itself without human supervision
+- *Stage 0. Without AI, the test automation rate has not been reached to 100% (Before)*
+- Stage 1. AI-assisted testing with human intervention implement  100% automation (Current)
+- Stage 2. AI analyze requirement, test plan and code generation with human guidance (Future)
+- Stage 3. AI fully drive test itself without human supervision (Future)
 
 ## Architecture
 ![](./Documents/Pictures/Architecture.jpg)

@@ -32,5 +32,5 @@ Manual => Automation => Autonomy
 [PPT](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/Documents/PPT/AI-powered_Autonomous_Test_Platform.pdf)
 
 ## Examples
-- [Demo 1 (OCR)](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/TestExecution/Vision/OCR/WRLinux)
-- [Demo 2 (Realtime Object Detection)](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/TestExecution/Vision/ObjectDetection/WRLinux)
+- [Apply "OCR" to Tes)](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/TestExecution/Vision/OCR/WRLinux)
+- [Apply "Realtime Object Detection" to Test](https://github.com/charleshardy/AI-powered-Autonomous-Test/tree/master/TestExecution/Vision/ObjectDetection/WRLinux)

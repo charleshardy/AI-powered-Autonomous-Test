@@ -1,7 +1,7 @@
 Applied Realtime Object Detection to Linux BSP Graphic Test
 =============================================
 
-This test scenario is a demonstration of adopting Realtime Object Detection technique to validate the test results for Wind River Linux BSP graphic testing during the process of DevOps automation.
+This test scenario is a demonstration of adopting Realtime Object Detection technique to validate the test results for Wind River Linux BSP graphic testing during the process of DevOps automation. It's also an example of carrying out tests based on video stream.
 
 
 Background
